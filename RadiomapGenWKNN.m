@@ -7,7 +7,7 @@ a = 2;      % 路径损耗因子
 Pt = -15;% 发射功率，单位dBm
 
 %%%%%%%%   在200m*200m的监控区域内均匀分布121个参考点
-[X,Y] = meshgrid(0:10:200,0:10:200);
+[X,Y] = meshgrid(0:1:200,0:1:200);
 dm=[X(:) Y(:)];   %每个参考点的坐标
 
 %%%%%%%%选取16个锚节点，均匀分布于监控区域
@@ -16,10 +16,10 @@ RefNode = [25 25;75 25;125 25;175 25;25 75;75 75;125 75;175 75;25 125;75 125;125
 
 %%%%%%%%建立指纹库，也即采集每个参考点到锚节点的RSSI值
  for i=1:size(dm, 1)    %参考点上共有 11*11=121个点  
-        v=randn(sizex,5);   %加入均值为5dbm的噪声
+        v=randn(sizex, 1);   %加入均值为5dbm的噪声
         for j = 1:sizex     %每个锚节点
             d(i,j)=sqrt((dm(i,1)-RefNode(j,1))^2 + (dm(i,2)-RefNode(j,2))^2);
-            fgpt(i,j) = Pt - ( Pld0+10*a*log10(d(i,j)))+v(j); % %fingerprint 指纹库内，各参考点到各锚节点的信号强度   
+            fgpt(i,j) = Pt - ( Pld0+10*a*log10(d(i,j)));% +v(j); % %fingerprint 指纹库内，各参考点到各锚节点的信号强度   
         end
  end
  
@@ -44,10 +44,10 @@ end
 for kk = 1:mk    %每个待定位的目标点
     x0=pathNode(kk,1); % 横坐标  
     y0=pathNode(kk,2); % 纵坐标
-    v1=randn(sizex,3);%加入均值为3dbm的噪声 
+    v1=randn(sizex, 1);%加入均值为3dbm的噪声 
     for k=1:sizex
         r(k) = sqrt((x0-RefNode(k,1))^2 + (y0-RefNode(k,2))^2); % 到各锚节点的距离
-        online_rssi(kk,k) = Pt - ( Pld0+10*a*log10(r(k)))+v1(k);  %观测点到各锚节点的信号强度
+        online_rssi(kk,k) = Pt - ( Pld0+10*a*log10(r(k))); %+v1(k);  %观测点到各锚节点的信号强度
     end
 end
 
