@@ -7,7 +7,7 @@ a = 2;      % 路径损耗因子
 Pt = -15;% 发射功率，单位dBm
 
 %%%%%%%%   在200m*200m的监控区域内均匀分布121个参考点
-[X,Y] = meshgrid(0:20:200,0:20:200);
+[X,Y] = meshgrid(0:10:200,0:10:200);
 dm=[X(:) Y(:)];   %每个参考点的坐标
 
 %%%%%%%%选取16个锚节点，均匀分布于监控区域
@@ -15,7 +15,7 @@ RefNode = [25 25;75 25;125 25;175 25;25 75;75 75;125 75;175 75;25 125;75 125;125
 [sizex sizey] = size(RefNode);  % [sizex sizey]=[16,2] 
 
 %%%%%%%%建立指纹库，也即采集每个参考点到锚节点的RSSI值
- for i=1:121    %参考点上共有 11*11=121个点  
+ for i=1:size(dm, 1)    %参考点上共有 11*11=121个点  
         v=randn(sizex,5);   %加入均值为5dbm的噪声
         for j = 1:sizex     %每个锚节点
             d(i,j)=sqrt((dm(i,1)-RefNode(j,1))^2 + (dm(i,2)-RefNode(j,2))^2);
@@ -67,7 +67,7 @@ var_WKNN=var(WKNN_wucha,0,1);%求列向量均方差
 [Max_WKNN,xx]=max(WKNN_wucha); %求最大误差
 
  
-i=1:121;plot(dm(i,1),dm(i,2),'*k');hold on;  %参考点位置
+i=1:size(dm, 1);plot(dm(i,1),dm(i,2),'*k');hold on;  %参考点位置
 i=1:16;plot(RefNode(i,1),RefNode(i,2),'^b');hold on; %锚节点位置
 i=1:2:200;plot(pathNode(:,1),pathNode(:,2),'-k');hold on;  %运动点位置
 T=1:2:200;plot(xywknn(:,1),xywknn(:,2) ,'--r','linewidth',2,'markersize',4);hold on; %画估算的位置
